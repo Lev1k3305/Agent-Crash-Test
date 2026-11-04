@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "agent-crash-test-backend"
 version = "1.0.0"
 description = "Agent Crash Test Backend API - Phase 1 Foundation"
+readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "fastapi>=0.110.0",
