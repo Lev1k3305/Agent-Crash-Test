@@ -4,15 +4,10 @@ import {
   Database, 
   Activity, 
   CheckCircle2, 
-  XCircle, 
   AlertTriangle, 
   RefreshCw, 
-  Server, 
-  Terminal, 
-  Lock, 
   Download,
   Upload,
-  Save,
   Plus,
   ShieldCheck,
   HardDrive
@@ -132,17 +127,17 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ status, onRefresh })
   };
 
   return (
-    <div className="space-y-6 max-w-5xl font-mono text-xs">
+    <div className="space-y-6 max-w-5xl">
       {/* 1. Database Persistence & Backup Management */}
-      <div className="bg-[#111722] border border-[#1E293B] rounded-xl p-6 relative overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between pb-4 border-b border-slate-800 gap-3">
+      <div className="bg-[#131720] border border-white/[0.07] rounded-xl p-6">
+        <div className="flex flex-wrap items-center justify-between pb-4 border-b border-white/[0.07] gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-950/60 border border-purple-500/40 flex items-center justify-center text-purple-400">
+            <div className="w-10 h-10 rounded-xl bg-[#8B5CF6]/10 border border-[#8B5CF6]/30 flex items-center justify-center text-[#8B5CF6]">
               <HardDrive className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white">Local-First SQLite Persistence & Backups</h3>
-              <p className="text-slate-400 text-[11px]">Database survives process, browser, and computer restarts</p>
+              <h3 className="text-sm font-semibold text-[#F4F5F7]">Local-First SQLite Persistence & Backups</h3>
+              <p className="text-xs text-[#9299A8]">Database survives process, browser, and computer restarts</p>
             </div>
           </div>
 
@@ -150,148 +145,168 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ status, onRefresh })
             <a
               href={getBackupExportUrl()}
               download
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/40 text-emerald-300 font-medium transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#22C55E]/10 hover:bg-[#22C55E]/20 border border-[#22C55E]/25 text-[#22C55E] text-xs font-medium transition-colors cursor-pointer"
             >
-              <Download className="w-3.5 h-3.5 text-emerald-400" />
+              <Download className="w-3.5 h-3.5" />
               <span>Export Backup (.db)</span>
             </a>
 
             <button
               onClick={() => setIsRestoreOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-medium transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#191E29] hover:bg-[#202736] border border-white/[0.07] text-[#9299A8] hover:text-[#F4F5F7] text-xs font-medium transition-colors cursor-pointer"
             >
-              <Upload className="w-3.5 h-3.5 text-cyan-400" />
+              <Upload className="w-3.5 h-3.5 text-[#60A5FA]" />
               <span>Restore Backup</span>
             </button>
           </div>
         </div>
 
         {restoreSuccess && (
-          <div className="mt-4 p-3 rounded bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+          <div className="mt-4 p-3 rounded-lg bg-[#22C55E]/10 border border-[#22C55E]/20 text-[#22C55E] text-xs flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 shrink-0" />
             <span>{restoreSuccess}</span>
           </div>
         )}
 
         {/* Database Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-          <div className="p-3.5 rounded-lg bg-[#0B0F19] border border-slate-800">
-            <span className="text-slate-400 block mb-1 text-[11px]">Database Engine</span>
-            <span className="text-white font-bold text-sm">SQLite (WAL Mode)</span>
-            <span className="text-[10px] text-emerald-400 block mt-1">PRAGMA foreign_keys = ON</span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-xs">
+          <div className="p-3.5 rounded-lg bg-[#0E1118] border border-white/[0.04]">
+            <span className="text-[#697386] block mb-1 text-[11px]">Database Engine</span>
+            <span className="text-[#F4F5F7] font-semibold text-sm">SQLite (WAL Mode)</span>
+            <span className="text-[10px] text-[#22C55E] block mt-1 font-mono">PRAGMA foreign_keys = ON</span>
           </div>
 
-          <div className="p-3.5 rounded-lg bg-[#0B0F19] border border-slate-800">
-            <span className="text-slate-400 block mb-1 text-[11px]">Database File Size</span>
-            <span className="text-cyan-400 font-bold text-sm">
+          <div className="p-3.5 rounded-lg bg-[#0E1118] border border-white/[0.04]">
+            <span className="text-[#697386] block mb-1 text-[11px]">Database File Size</span>
+            <span className="text-[#60A5FA] font-semibold font-mono text-sm">
               {backupStatus ? backupStatus.size_formatted : '124.0 KB'}
             </span>
-            <span className="text-[10px] text-slate-500 block mt-1">
+            <span className="text-[10px] text-[#697386] block mt-1">
               {backupStatus?.file_exists ? 'Verified on Disk' : 'Initialized'}
             </span>
           </div>
 
-          <div className="p-3.5 rounded-lg bg-[#0B0F19] border border-slate-800">
-            <span className="text-slate-400 block mb-1 text-[11px]">Storage Path</span>
-            <span className="text-purple-300 font-bold text-xs truncate block" title={backupStatus?.database_path}>
+          <div className="p-3.5 rounded-lg bg-[#0E1118] border border-white/[0.04]">
+            <span className="text-[#697386] block mb-1 text-[11px]">Storage Path</span>
+            <span className="text-[#8B5CF6] font-mono text-xs truncate block" title={backupStatus?.database_path}>
               data/agent_crash_test.db
             </span>
-            <span className="text-[10px] text-slate-500 block mt-1">Absolute project-relative</span>
+            <span className="text-[10px] text-[#697386] block mt-1">Local persistent file</span>
           </div>
         </div>
 
         {/* Record Counts Breakdown */}
         {backupStatus && (
-          <div className="mt-4 p-3.5 rounded-lg bg-[#080B10] border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-slate-400">
-            <span>Persisted Record Counts:</span>
-            <div className="flex flex-wrap items-center gap-4 text-white font-semibold">
-              <span>Scenarios: <strong className="text-purple-400">{backupStatus.table_counts.test_scenarios ?? 0}</strong></span>
-              <span>Runs: <strong className="text-cyan-400">{backupStatus.table_counts.test_runs ?? 0}</strong></span>
-              <span>Events: <strong className="text-emerald-400">{backupStatus.table_counts.execution_events ?? 0}</strong></span>
-              <span>Reports: <strong className="text-amber-400">{backupStatus.table_counts.test_reports ?? 0}</strong></span>
-              <span>Settings: <strong className="text-slate-300">{backupStatus.table_counts.application_settings ?? 0}</strong></span>
+          <div className="mt-4 p-3.5 rounded-lg bg-[#0E1118] border border-white/[0.04] flex flex-wrap items-center justify-between gap-3 text-xs text-[#9299A8]">
+            <span>Persisted Records:</span>
+            <div className="flex flex-wrap items-center gap-4 text-[#F4F5F7] font-mono">
+              <span>Scenarios: <strong className="text-[#8B5CF6]">{backupStatus.table_counts.test_scenarios ?? 0}</strong></span>
+              <span>Runs: <strong className="text-[#60A5FA]">{backupStatus.table_counts.test_runs ?? 0}</strong></span>
+              <span>Events: <strong className="text-[#22C55E]">{backupStatus.table_counts.execution_events ?? 0}</strong></span>
+              <span>Reports: <strong className="text-[#F59E0B]">{backupStatus.table_counts.test_reports ?? 0}</strong></span>
+              <span>Settings: <strong className="text-[#9299A8]">{backupStatus.table_counts.application_settings ?? 0}</strong></span>
             </div>
           </div>
         )}
       </div>
 
       {/* 2. Live Backend Connection Diagnostics */}
-      <div className="bg-[#111722] border border-[#1E293B] rounded-xl p-6">
-        <div className="flex flex-wrap items-center justify-between pb-4 border-b border-slate-800 gap-3">
+      <div className="bg-[#131720] border border-white/[0.07] rounded-xl p-6">
+        <div className="flex flex-wrap items-center justify-between pb-4 border-b border-white/[0.07] gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-950/60 border border-purple-500/40 flex items-center justify-center text-purple-400">
+            <div className="w-10 h-10 rounded-xl bg-[#8B5CF6]/10 border border-[#8B5CF6]/30 flex items-center justify-center text-[#8B5CF6]">
               <Activity className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white">Backend & Database Diagnostics</h3>
-              <p className="text-slate-400 text-[11px]">Authoritative FastAPI engine verification</p>
+              <h3 className="text-sm font-semibold text-[#F4F5F7]">Backend & Database Diagnostics</h3>
+              <p className="text-xs text-[#9299A8]">Authoritative FastAPI engine verification</p>
             </div>
           </div>
 
           <button
             onClick={onRefresh}
             disabled={status.isLoading}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/40 text-white font-medium cursor-pointer"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#191E29] hover:bg-[#202736] border border-white/[0.07] text-[#F4F5F7] text-xs font-medium cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${status.isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-[#8B5CF6] ${status.isLoading ? 'animate-spin' : ''}`} />
             <span>Re-check Connectivity</span>
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div className="p-4 rounded-xl bg-[#0B0F19] border border-slate-800">
-            <div className="text-slate-400 text-[11px] mb-2 font-semibold">API Process Health (/api/health)</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-xs">
+          <div className="p-4 rounded-xl bg-[#0E1118] border border-white/[0.04]">
+            <div className="text-[#697386] text-[11px] mb-2 font-medium">API Process Health (/api/health)</div>
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-              <span className="text-sm font-bold text-emerald-400 uppercase">{status.apiStatus}</span>
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  status.apiStatus === 'healthy' ? 'bg-[#22C55E]' : 'bg-[#EF4444]'
+                }`}
+              />
+              <span
+                className={`text-sm font-semibold uppercase ${
+                  status.apiStatus === 'healthy' ? 'text-[#22C55E]' : 'text-[#EF4444]'
+                }`}
+              >
+                {status.apiStatus}
+              </span>
             </div>
-            <div className="mt-2 text-slate-400 text-[11px]">
-              Service: <span className="text-white">{status.serviceName}</span> · Latency: <span className="text-cyan-400">{status.latencyMs ?? 0}ms</span>
+            <div className="mt-2 text-[#9299A8] text-[11px]">
+              Service: <span className="text-[#F4F5F7] font-mono">{status.serviceName}</span> · Latency: <span className="text-[#60A5FA] font-mono">{status.latencyMs ?? 0}ms</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#0B0F19] border border-slate-800">
-            <div className="text-slate-400 text-[11px] mb-2 font-semibold">Database Readiness (/api/ready)</div>
+          <div className="p-4 rounded-xl bg-[#0E1118] border border-white/[0.04]">
+            <div className="text-[#697386] text-[11px] mb-2 font-medium">Database Readiness (/api/ready)</div>
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-              <span className="text-sm font-bold text-emerald-400 uppercase">Connected (Ready)</span>
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  status.dbStatus === 'connected' ? 'bg-[#22C55E]' : 'bg-[#EF4444]'
+                }`}
+              />
+              <span
+                className={`text-sm font-semibold uppercase ${
+                  status.dbStatus === 'connected' ? 'text-[#22C55E]' : 'text-[#EF4444]'
+                }`}
+              >
+                {status.dbStatus === 'connected' ? 'Connected (Ready)' : status.dbStatus}
+              </span>
             </div>
-            <div className="mt-2 text-slate-400 text-[11px]">
-              Active Driver: <span className="text-white">SQLite 3</span> · Pre-ping: <span className="text-emerald-400">Active</span>
+            <div className="mt-2 text-[#9299A8] text-[11px]">
+              Active Driver: <span className="text-[#F4F5F7]">SQLite 3</span> · Pre-ping: <span className="text-[#22C55E]">Active</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* 3. Persistent Application Settings Table */}
-      <div className="bg-[#111722] border border-[#1E293B] rounded-xl p-6">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div className="bg-[#131720] border border-white/[0.07] rounded-xl p-6">
+        <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
           <div>
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <SettingsIcon className="w-4 h-4 text-purple-400" />
+            <h3 className="text-sm font-semibold text-[#F4F5F7] flex items-center gap-2">
+              <SettingsIcon className="w-4 h-4 text-[#8B5CF6]" />
               Application Settings Table
             </h3>
-            <p className="text-slate-400 text-[11px]">Persistent configuration stored in SQLite</p>
+            <p className="text-xs text-[#9299A8]">Persistent configuration stored in SQLite</p>
           </div>
           <button
             onClick={() => setIsAddSettingOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-medium cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-xs font-medium cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Setting</span>
           </button>
         </div>
 
-        <div className="mt-4 divide-y divide-slate-800/60">
+        <div className="mt-4 divide-y divide-white/[0.04] text-xs">
           {appSettings.map((s) => (
             <div key={s.id} className="py-2.5 flex items-center justify-between gap-4">
               <div>
-                <span className="font-bold text-white">{s.key}</span>
+                <span className="font-medium text-[#F4F5F7] font-mono">{s.key}</span>
                 {s.description && (
-                  <span className="text-slate-500 text-[11px] block">{s.description}</span>
+                  <span className="text-[#697386] text-[11px] block mt-0.5">{s.description}</span>
                 )}
               </div>
-              <span className="text-cyan-300 px-2 py-0.5 rounded bg-[#080B10] border border-slate-800">
+              <span className="text-[#60A5FA] font-mono px-2 py-0.5 rounded bg-[#0E1118] border border-white/[0.06]">
                 {s.value}
               </span>
             </div>
@@ -301,35 +316,35 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ status, onRefresh })
 
       {/* Restore Backup Modal with Confirmation */}
       {isRestoreOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-[#111722] border border-rose-500/40 rounded-2xl max-w-lg w-full p-6 relative cyber-glow-red space-y-4">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-rose-400" />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-[#131720] border border-white/[0.1] rounded-xl max-w-lg w-full p-6 relative space-y-4 text-xs shadow-xl">
+            <h3 className="text-sm font-semibold text-[#EF4444] flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-[#EF4444]" />
               Restore Database from Backup
             </h3>
 
-            <p className="text-slate-300 text-xs leading-relaxed">
-              Restoring a backup will replace the current SQLite database (<code className="text-purple-300">data/agent_crash_test.db</code>). A safety snapshot will be created before replacement.
+            <p className="text-[#9299A8] leading-relaxed">
+              Restoring a backup will replace the current SQLite database (<code className="text-[#8B5CF6] font-mono">data/agent_crash_test.db</code>). A safety snapshot will be created before replacement.
             </p>
 
             {restoreError && (
-              <div className="p-2.5 rounded bg-rose-950/60 border border-rose-500/40 text-rose-300">
+              <div className="p-2.5 rounded-lg bg-[#EF4444]/10 border border-[#EF4444]/20 text-[#EF4444]">
                 {restoreError}
               </div>
             )}
 
             <div>
-              <label className="block text-slate-400 mb-1">Select SQLite Backup File (.db)</label>
+              <label className="block text-[#9299A8] mb-1">Select SQLite Backup File (.db)</label>
               <input
                 type="file"
                 accept=".db,.sqlite,.sqlite3"
                 onChange={handleFileSelect}
-                className="w-full bg-[#080B10] border border-slate-800 rounded p-2 text-white file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:bg-purple-600 file:text-white"
+                className="w-full bg-[#0E1118] border border-white/[0.07] rounded-lg p-2 text-[#F4F5F7] file:mr-3 file:py-1 file:px-2 file:rounded-md file:border-0 file:bg-[#8B5CF6] file:text-white file:text-xs"
               />
             </div>
 
             <div>
-              <label className="block text-rose-400 font-bold mb-1">
+              <label className="block text-[#EF4444] font-medium mb-1">
                 Type CONFIRM to authorize overwrite:
               </label>
               <input
@@ -337,15 +352,15 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ status, onRefresh })
                 placeholder="CONFIRM"
                 value={confirmInput}
                 onChange={(e) => setConfirmInput(e.target.value)}
-                className="w-full bg-[#080B10] border border-rose-900 rounded p-2 text-white font-bold tracking-wider focus:outline-none focus:border-rose-500"
+                className="w-full bg-[#0E1118] border border-[#EF4444]/40 rounded-lg p-2 text-[#F4F5F7] font-mono font-semibold tracking-wider focus:outline-none focus:border-[#EF4444]"
               />
             </div>
 
-            <div className="pt-3 border-t border-slate-800 flex justify-end gap-2">
+            <div className="pt-3 border-t border-white/[0.07] flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setIsRestoreOpen(false)}
-                className="px-4 py-2 rounded bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer"
+                className="px-4 py-2 rounded-lg bg-[#191E29] hover:bg-[#202736] text-[#9299A8] cursor-pointer"
               >
                 Cancel
               </button>
@@ -353,7 +368,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ status, onRefresh })
                 type="button"
                 disabled={isRestoring || confirmInput.trim() !== 'CONFIRM' || !restoreFileBase64}
                 onClick={handleExecuteRestore}
-                className="px-4 py-2 rounded bg-rose-600 hover:bg-rose-500 disabled:opacity-40 text-white font-bold cursor-pointer"
+                className="px-4 py-2 rounded-lg bg-[#EF4444] hover:bg-[#DC2626] disabled:opacity-40 text-white font-medium cursor-pointer"
               >
                 {isRestoring ? 'Restoring Database...' : 'Authorize Restore'}
               </button>
@@ -364,55 +379,55 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ status, onRefresh })
 
       {/* Add Setting Modal */}
       {isAddSettingOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
           <form
             onSubmit={handleSaveSetting}
-            className="bg-[#111722] border border-purple-500/40 rounded-2xl max-w-md w-full p-6 space-y-4"
+            className="bg-[#131720] border border-white/[0.1] rounded-xl max-w-md w-full p-6 space-y-4 text-xs shadow-xl"
           >
-            <h3 className="text-base font-bold text-white">Add Persistent Configuration</h3>
+            <h3 className="text-sm font-semibold text-[#F4F5F7]">Add Persistent Configuration</h3>
             <div>
-              <label className="block text-slate-400 mb-1">Key *</label>
+              <label className="block text-[#9299A8] mb-1">Key *</label>
               <input
                 type="text"
                 required
                 placeholder="e.g. audit_retention_days"
                 value={newKey}
                 onChange={(e) => setNewKey(e.target.value)}
-                className="w-full bg-[#080B10] border border-slate-800 rounded p-2 text-white"
+                className="w-full bg-[#0E1118] border border-white/[0.07] rounded-lg p-2 text-[#F4F5F7] font-mono focus:outline-none focus:border-[#8B5CF6]"
               />
             </div>
             <div>
-              <label className="block text-slate-400 mb-1">Value *</label>
+              <label className="block text-[#9299A8] mb-1">Value *</label>
               <input
                 type="text"
                 required
                 placeholder="e.g. 90"
                 value={newValue}
                 onChange={(e) => setNewValue(e.target.value)}
-                className="w-full bg-[#080B10] border border-slate-800 rounded p-2 text-white"
+                className="w-full bg-[#0E1118] border border-white/[0.07] rounded-lg p-2 text-[#F4F5F7] font-mono focus:outline-none focus:border-[#8B5CF6]"
               />
             </div>
             <div>
-              <label className="block text-slate-400 mb-1">Description</label>
+              <label className="block text-[#9299A8] mb-1">Description</label>
               <input
                 type="text"
                 placeholder="Optional description"
                 value={newDesc}
                 onChange={(e) => setNewDesc(e.target.value)}
-                className="w-full bg-[#080B10] border border-slate-800 rounded p-2 text-white"
+                className="w-full bg-[#0E1118] border border-white/[0.07] rounded-lg p-2 text-[#F4F5F7] focus:outline-none focus:border-[#8B5CF6]"
               />
             </div>
             <div className="pt-2 flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setIsAddSettingOpen(false)}
-                className="px-4 py-2 rounded bg-slate-800 text-slate-300"
+                className="px-4 py-2 rounded-lg bg-[#191E29] hover:bg-[#202736] text-[#9299A8]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded bg-purple-600 hover:bg-purple-500 text-white font-medium"
+                className="px-4 py-2 rounded-lg bg-[#8B5CF6] hover:bg-[#7C3AED] text-white font-medium"
               >
                 Save
               </button>

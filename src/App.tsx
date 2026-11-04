@@ -34,8 +34,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#080B10] text-slate-100 flex flex-row selection:bg-purple-600 selection:text-white">
-      {/* Persistent Left Cyber Sidebar */}
+    <div className="min-h-screen bg-[#0B0D12] text-[#F4F5F7] flex flex-row selection:bg-[#8B5CF6]/30 selection:text-white">
+      {/* Persistent Left Sidebar */}
       <CyberSidebar
         currentPage={currentPage}
         onNavigate={(page) => setCurrentPage(page)}
@@ -50,7 +50,7 @@ export default function App() {
           onRefresh={refreshStatus}
         />
 
-        <main className="flex-1 p-6 lg:p-8 max-w-[1600px] w-full mx-auto">
+        <main className="flex-1 p-6 lg:p-8 max-w-[1500px] w-full mx-auto">
           {renderContent()}
         </main>
       </div>
