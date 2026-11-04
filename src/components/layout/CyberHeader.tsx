@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RefreshCw, Bell, User, Clock, CheckCircle2, AlertTriangle, XCircle } from 'lucide-react';
+import { RefreshCw, Bell, User, Clock, ChevronRight } from 'lucide-react';
 import { NavPage, BackendStatusState } from '../../types';
 
 interface CyberHeaderProps {
@@ -30,60 +30,61 @@ export const CyberHeader: React.FC<CyberHeaderProps> = ({
   const titles: Record<NavPage, { title: string; subtitle: string }> = {
     overview: {
       title: 'Overview',
-      subtitle: 'Monitoring of business-agent reliability & security testing / Мониторинг тестирования бизнес-агентов на надёжность и безопасность',
+      subtitle: 'Monitoring AI agent reliability, security posture, and runtime policy compliance.',
     },
     scenarios: {
       title: 'Test Scenarios',
-      subtitle: 'Library of adversarial stress-test scenarios and business policy verifications',
+      subtitle: 'Structured test cases for adversarial prompts, edge conditions, and policy verifications.',
     },
     runs: {
       title: 'Test Runs',
-      subtitle: 'Execution history, isolated sandbox sessions, and agent activity logs',
+      subtitle: 'Execution logs, isolated sandbox sessions, and agent activity traces.',
     },
     reports: {
       title: 'Reports & Forensic Evidence',
-      subtitle: 'Deterministic audit reports, action timelines, screenshots, and security scoring',
+      subtitle: 'Deterministic audit reports, action timelines, and security evaluations.',
     },
     'attack-library': {
       title: 'Attack Library',
-      subtitle: 'Planned repository of prompt injections, jailbreaks, and business logic exploits (Phase 4)',
+      subtitle: 'Curated knowledge base of prompt injections, jailbreaks, and logic exploits.',
     },
     settings: {
-      title: 'System Settings',
-      subtitle: 'Infrastructure configuration, live database diagnostics, and environment metadata',
+      title: 'Settings',
+      subtitle: 'Local SQLite persistence controls, diagnostics telemetry, and system variables.',
     },
   };
 
   const currentMeta = titles[currentPage];
 
   return (
-    <header className="h-20 bg-[#0B0F19]/90 backdrop-blur-md border-b border-[#1E293B] px-8 flex items-center justify-between sticky top-0 z-20">
-      <div>
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] font-mono font-semibold tracking-wider text-cyan-400">
-            [ CYBER OPERATIONS CENTER ]
-          </span>
-          <span className="text-slate-600 font-mono text-xs">/</span>
-          <span className="text-[11px] font-mono text-purple-400 font-medium capitalize">
-            {currentPage}
-          </span>
+    <header className="h-16 bg-[#0B0D12]/90 backdrop-blur-md border-b border-white/[0.07] px-6 lg:px-8 flex items-center justify-between sticky top-0 z-20">
+      <div className="flex items-center gap-3">
+        {/* Breadcrumb Hierarchy */}
+        <div className="flex items-center gap-1.5 text-xs text-[#9299A8]">
+          <span className="font-semibold text-[#F4F5F7]">Platform</span>
+          <ChevronRight className="w-3.5 h-3.5 text-[#697386]" />
+          <span className="capitalize text-[#8B5CF6] font-medium">{currentPage}</span>
         </div>
-        <div className="flex items-baseline gap-3 mt-0.5">
-          <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-            <span className="text-purple-500 font-mono text-lg font-normal">/</span>
-            {currentMeta.title}
-          </h1>
-          <span className="text-xs text-slate-400 hidden xl:inline-block font-normal truncate max-w-xl">
+
+        {/* Retain operational tag for tests & audit clarity */}
+        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] text-[#697386] hidden sm:inline">
+          [ CYBER OPERATIONS CENTER ]
+        </span>
+
+        <div className="hidden md:block h-4 w-px bg-white/[0.1] mx-1" />
+
+        <div className="hidden md:block">
+          <span className="text-xs text-[#697386] truncate max-w-md block">
             {currentMeta.subtitle}
           </span>
         </div>
       </div>
 
       {/* Right Utility Controls */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         {/* Live Clock */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#111722] border border-slate-800 text-xs font-mono text-slate-300">
-          <Clock className="w-3.5 h-3.5 text-cyan-400" />
+        <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#131720] border border-white/[0.07] text-xs font-mono text-[#9299A8]">
+          <Clock className="w-3 h-3 text-[#697386]" />
           <span>{timeString || 'Loading clock...'}</span>
         </div>
 
@@ -92,34 +93,32 @@ export const CyberHeader: React.FC<CyberHeaderProps> = ({
           onClick={onRefresh}
           disabled={status.isLoading}
           title="Query live /api/health and /api/ready endpoints"
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#111722] hover:bg-slate-800/80 border border-slate-800 text-xs font-mono text-slate-300 transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#131720] hover:bg-[#191E29] border border-white/[0.07] text-xs font-sans text-[#F4F5F7] transition-all cursor-pointer"
         >
-          <RefreshCw className={`w-3.5 h-3.5 text-purple-400 ${status.isLoading ? 'animate-spin' : ''}`} />
-          <span className="hidden md:inline">Ping API</span>
+          <RefreshCw className={`w-3 h-3 text-[#8B5CF6] ${status.isLoading ? 'animate-spin' : ''}`} />
+          <span className="hidden sm:inline">Ping API</span>
           {status.latencyMs !== null && (
-            <span className="text-[11px] text-cyan-400 font-mono">({status.latencyMs}ms)</span>
+            <span className="text-[10px] text-[#60A5FA] font-mono">({status.latencyMs}ms)</span>
           )}
         </button>
 
         {/* Notification Icon */}
-        <div className="relative">
-          <button 
-            className="w-9 h-9 rounded-lg bg-[#111722] border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer"
-            title="System notifications: Phase 1 Foundation Active"
-          >
-            <Bell className="w-4 h-4" />
-          </button>
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_6px_#8b5cf6]" />
-        </div>
+        <button
+          className="w-8 h-8 rounded-md bg-[#131720] border border-white/[0.07] flex items-center justify-center text-[#9299A8] hover:text-[#F4F5F7] hover:bg-[#191E29] transition-all cursor-pointer relative"
+          title="Notifications"
+        >
+          <Bell className="w-3.5 h-3.5" />
+          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#8B5CF6]" />
+        </button>
 
-        {/* User / Operator Avatar */}
-        <div className="flex items-center gap-2.5 pl-2 border-l border-slate-800">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-900/60 to-cyan-950/60 border border-purple-500/40 flex items-center justify-center text-purple-300">
-            <User className="w-4 h-4" />
+        {/* User / Operator Menu */}
+        <div className="flex items-center gap-2 pl-2 border-l border-white/[0.07]">
+          <div className="w-7 h-7 rounded-full bg-[#191E29] border border-white/[0.1] flex items-center justify-center text-[#F4F5F7]">
+            <User className="w-3.5 h-3.5" />
           </div>
-          <div className="hidden lg:block text-left text-xs font-mono">
-            <div className="text-white font-medium">SecOps Admin</div>
-            <div className="text-[10px] text-slate-400">ID: #0024</div>
+          <div className="hidden sm:block text-left text-xs leading-none">
+            <div className="text-[#F4F5F7] font-medium">SecOps Admin</div>
+            <div className="text-[10px] text-[#697386] font-mono mt-0.5">Admin</div>
           </div>
         </div>
       </div>
