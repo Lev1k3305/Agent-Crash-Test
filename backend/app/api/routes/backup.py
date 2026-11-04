@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
 from backend.app.core.config import settings
+from backend.app.core.logging import logger
 from backend.app.db.session import get_db, seed_initial_data
 from backend.app.models.scenario import TestScenario
 from backend.app.models.run import TestRun
@@ -63,7 +64,10 @@ def get_backup_status(db: Session = Depends(get_db)):
 
 @router.get("/export")
 def export_backup():
-    """Download a point-in-time binary backup copy of the persistent SQLite database."""
+    """Download a point-in-time binary backup copy of the persistent SQLite database using SQLite Online Backup API."""
+    import sqlite3
+    import io
+
     db_file = settings.db_file_path
     if not db_file.exists():
         raise HTTPException(
@@ -71,8 +75,37 @@ def export_backup():
             detail="Database file does not exist on disk.",
         )
 
-    with open(db_file, "rb") as f:
-        content = f.read()
+    try:
+        # Use sqlite3.Connection.backup() to create a fully consistent, atomic snapshot
+        # Even under concurrent write activity and active WAL transactions
+        source_conn = sqlite3.connect(f"file:{db_file}?mode=ro", uri=True)
+        dest_mem_conn = sqlite3.connect(":memory:")
+        source_conn.backup(dest_mem_conn)
+        source_conn.close()
+
+        # Serialize the memory database to bytes
+        backup_bytes_io = io.BytesIO()
+        for line in dest_mem_conn.iterdump():
+            pass  # iter is valid, but dest_mem_conn.serialize() or temp file is native
+        # In Python 3.10+, sqlite3.Connection.serialize() is directly supported
+        if hasattr(dest_mem_conn, "serialize"):
+            content = dest_mem_conn.serialize()
+        else:
+            # Fallback to temp file backup
+            temp_backup_file = db_file.with_suffix(".export.tmp")
+            dest_file_conn = sqlite3.connect(str(temp_backup_file))
+            dest_mem_conn.backup(dest_file_conn)
+            dest_file_conn.close()
+            with open(temp_backup_file, "rb") as f:
+                content = f.read()
+            temp_backup_file.unlink(missing_ok=True)
+
+        dest_mem_conn.close()
+    except Exception as exc:
+        logger.error(f"Failed to generate consistent SQLite backup: {exc}")
+        # Safe fallback: read disk file
+        with open(db_file, "rb") as f:
+            content = f.read()
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"agent_crash_test_backup_{timestamp}.db"

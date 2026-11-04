@@ -9,7 +9,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
-const FASTAPI_PORT = 8001;
+const FASTAPI_PORT = process.env.FASTAPI_PORT ? parseInt(process.env.FASTAPI_PORT, 10) : 8000;
 
 let fastApiProcess: ChildProcess | null = null;
 

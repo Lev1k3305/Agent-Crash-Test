@@ -106,51 +106,92 @@ The services will be available at:
 
 ---
 
-## 4. Local Native Development
+## 4. Local-First Development & Windows Startup
 
-### Backend Setup (Python)
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e backend/
-python3 backend/tests/run_tests.py
-uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
-```
+Agent Crash Test operates as an authoritative local-first application. The database is persistent SQLite (`data/agent_crash_test.db`) stored directly on your computer.
 
-### Frontend Setup (Node.js)
-```bash
-npm install
-npm test
-npm run build
-npm run dev
+### Windows One-Click Quick Start (PowerShell)
+```powershell
+.\start-local.ps1
 ```
+This automatically verifies dependencies, runs Alembic migrations, and launches both FastAPI and Vite in separate console windows.
 
 ---
 
-## 5. Automated Quality Checks
+### Native Dual-Process Execution (Cross-Platform)
+
+#### Terminal 1: Python FastAPI Service
+```bash
+# 1. Install dependencies
+pip install fastapi uvicorn pydantic-settings sqlalchemy alembic httpx python-dotenv
+
+# 2. Run Alembic schema migrations
+python -m alembic upgrade head
+
+# 3. Start authoritative FastAPI backend on port 8000
+python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
+```
+- **Backend API URL**: `http://127.0.0.1:8000`
+- **Interactive Swagger Docs**: `http://127.0.0.1:8000/api/docs`
+- **SQLite Database Path**: `data/agent_crash_test.db`
+
+#### Terminal 2: React 19 + Vite Frontend
+```bash
+# 1. Install dependencies
+npm install   # or: bun install
+
+# 2. Start Vite development server
+npm run dev   # or: bun run dev
+```
+- **Frontend URL**: `http://localhost:3000` (or `http://localhost:5173`)
+
+---
+
+## 5. Vercel Static Frontend Deployment
+
+Vercel is used **strictly for static frontend hosting** (React 19 + Vite SPA). The backend and database remain local on the user's computer.
+
+### Required Vercel Project Settings:
+- **Framework Preset**: `Vite`
+- **Root Directory**: `./`
+- **Build Command**: `vite build` (or `npm run build` / `bun run build`)
+- **Output Directory**: `dist`
+- **Install Command**: `npm install` (or `bun install`)
+- **Environment Variables**:
+  - `VITE_API_BASE_URL`: `http://127.0.0.1:8000` (points client browser to local FastAPI backend)
+
+Direct navigation to SPA routes (`/dashboard`, `/scenarios`, `/runs`, `/reports`) is routed to `index.html` via `vercel.json`.
+
+---
+
+## 6. Automated Quality Checks
 
 Run all verification suites:
 
 ```bash
-# 1. Backend tests
-python3 backend/tests/run_tests.py
+# 1. Backend unit & persistence tests
+PYTHONPATH=. python3 backend/tests/run_tests.py
 
-# 2. Frontend unit tests
-npm test -- --run
+# 2. Full 9-step persistence lifecycle verification
+PYTHONPATH=. python3 backend/tests/verify_persistence_lifecycle.py
 
-# 3. TypeScript validation
-npm run lint
+# 3. Frontend unit tests
+npm test   # or: bun run test
 
-# 4. Production build
-npm run build
+# 4. TypeScript validation
+npm run lint   # or: bun run lint
+
+# 5. Production build
+npm run build  # or: bun run build
 ```
 
 ---
 
-## 6. Troubleshooting
+## 7. Troubleshooting
 
-- **Database Disconnected Status in UI**: Verify PostgreSQL is running on port 5432 and the `DATABASE_URL` credentials in `.env` match.
-- **CORS Errors**: Ensure `CORS_ORIGINS` in `.env` includes your client's host origin (`http://localhost:3000`).
+- **Backend Offline in UI Banner**: Verify FastAPI is running on `http://127.0.0.1:8000`. The frontend displays a real-time banner when the local backend is unreachable.
+- **CORS Errors**: Ensure `CORS_ORIGINS` in `.env` includes your client's host origin (`http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173`).
+- **Database Backup**: Binary snapshots can be exported directly from the Settings page or via `GET http://127.0.0.1:8000/api/backup/export`.
 
 ---
 
