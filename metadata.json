@@ -1,0 +1,6 @@
+{
+  "name": "Agent Crash Test",
+  "description": "AI Agent Reliability & Security Testing Platform — Phase 1 Foundation. Stress-testing business operations agents against adversarial attacks, prompt injection, and edge-case failures.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,80 @@
+# ==============================================================================
+# Agent Crash Test — Docker Compose Environment (Phase 1 Foundation)
+# Multi-container local development stack: Frontend, Backend API, PostgreSQL
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # PostgreSQL 16 Database
+  # ----------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: agent-crash-test-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-crash_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-crash_password}
+      POSTGRES_DB: ${POSTGRES_DB:-agent_crash_test}
+    ports:
+      # Expose PostgreSQL port 5432 for host management and migration inspection
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-crash_user} -d ${POSTGRES_DB:-agent_crash_test}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # ----------------------------------------------------------------------------
+  # Backend API Service (FastAPI / Python 3.12 / Uvicorn)
+  # ----------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: agent-crash-test-backend
+    restart: unless-stopped
+    ports:
+      # Expose FastAPI backend on host port 8000
+      - "8000:8000"
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      APP_VERSION: ${APP_VERSION:-1.0.0}
+      API_VERSION: ${API_VERSION:-v1}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-crash_user}:${POSTGRES_PASSWORD:-crash_password}@postgres:5432/${POSTGRES_DB:-agent_crash_test}
+      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  # ----------------------------------------------------------------------------
+  # Frontend Application (React / TypeScript / Vite)
+  # ----------------------------------------------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: agent-crash-test-frontend
+    restart: unless-stopped
+    ports:
+      # Expose Frontend on host port 3000
+      - "3000:3000"
+    environment:
+      VITE_API_URL: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+    driver: local
+    name: agent-crash-test-pgdata
