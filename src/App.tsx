@@ -9,6 +9,7 @@ import { AttackLibraryPage } from './pages/AttackLibraryPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { useBackendStatus } from './hooks/useBackendStatus';
 import { NavPage } from './types';
+import { AlertCircle, Terminal, RefreshCw } from 'lucide-react';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<NavPage>('overview');
@@ -49,6 +50,32 @@ export default function App() {
           status={status}
           onRefresh={refreshStatus}
         />
+
+        {/* Informative Local Backend Offline Alert */}
+        {status.apiStatus === 'disconnected' && (
+          <div className="bg-[#EF4444]/10 border-b border-[#EF4444]/20 px-6 py-2.5 flex items-center justify-between text-xs text-[#F4F5F7]">
+            <div className="flex items-center gap-2 min-w-0">
+              <AlertCircle className="w-4 h-4 text-[#EF4444] shrink-0" />
+              <span className="font-semibold text-[#EF4444]">Local Backend Offline:</span>
+              <span className="text-[#9299A8] truncate">
+                FastAPI is not reachable at <code className="text-[#F4F5F7] font-mono">http://127.0.0.1:8000</code>. Start backend locally to enable live SQLite persistence.
+              </span>
+            </div>
+            <div className="flex items-center gap-3 shrink-0 ml-4">
+              <span className="hidden md:inline font-mono text-[11px] text-[#697386] bg-black/30 px-2 py-0.5 rounded border border-white/5">
+                <Terminal className="w-3 h-3 inline mr-1 text-[#8B5CF6]" />
+                python -m uvicorn backend.app.main:app --port 8000
+              </span>
+              <button
+                onClick={refreshStatus}
+                className="px-2 py-1 rounded bg-[#EF4444]/20 hover:bg-[#EF4444]/30 text-[#EF4444] font-medium text-xs flex items-center gap-1 transition-all cursor-pointer"
+              >
+                <RefreshCw className={`w-3 h-3 ${status.isLoading ? 'animate-spin' : ''}`} />
+                Retry
+              </button>
+            </div>
+          </div>
+        )}
 
         <main className="flex-1 p-6 lg:p-8 max-w-[1500px] w-full mx-auto">
           {renderContent()}

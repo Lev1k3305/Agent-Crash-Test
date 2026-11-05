@@ -27,9 +27,12 @@ class Settings(BaseSettings):
     # SQLite Database Configuration (Local-first, persistent)
     DATABASE_URL: str = Field(default="")
 
-    # Explicit CORS configuration
+    # Explicit CORS configuration (includes Vite dev defaults on 5173 and 3000)
     CORS_ORIGINS: str = Field(
-        default=os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
+        default=os.getenv(
+            "CORS_ORIGINS",
+            "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173",
+        )
     )
 
     def model_post_init(self, __context) -> None:
@@ -42,7 +45,12 @@ class Settings(BaseSettings):
     @property
     def cors_origins_list(self) -> List[str]:
         if not self.CORS_ORIGINS:
-            return ["http://localhost:3000", "http://127.0.0.1:3000"]
+            return [
+                "http://localhost:3000",
+                "http://127.0.0.1:3000",
+                "http://localhost:5173",
+                "http://127.0.0.1:5173",
+            ]
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
 
     @property

@@ -40,14 +40,13 @@ If you prefer running the Python FastAPI backend and Vite frontend in separate t
 ### Terminal 1: Python FastAPI Service
 ```bash
 # Install Python dependencies
-pip install -r <(python3 -c "import tomllib; print('\n'.join(tomllib.load(open('backend/pyproject.toml', 'rb'))['project']['dependencies']))")
-# Or: pip install fastapi uvicorn pydantic-settings sqlalchemy alembic httpx
+pip install fastapi uvicorn pydantic-settings sqlalchemy alembic httpx python-dotenv
 
 # Run Alembic migrations
-python3 -m alembic upgrade head
+python -m alembic upgrade head
 
-# Start FastAPI server on port 8001
-uvicorn backend.app.main:app --host 127.0.0.1 --port 8001 --reload
+# Start FastAPI server on port 8000
+python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 ### Terminal 2: React Frontend (Vite)
@@ -96,7 +95,48 @@ curl -X POST http://localhost:3000/api/backup/restore \
 
 ---
 
-## 6. Docker Deployment (Optional Alternative)
+## 6. Vercel Static Frontend Deployment
+
+Vercel is used strictly for hosting the static React 19 + Vite frontend. No Python serverless functions, SQLite instances, or cloud databases run in Vercel.
+
+### Vercel Dashboard Settings:
+- **Framework Preset**: `Vite`
+- **Root Directory**: `./`
+- **Build Command**: `vite build`
+- **Output Directory**: `dist`
+- **Install Command**: `npm install` (or `bun install`)
+- **Environment Variables**:
+  - `VITE_API_BASE_URL`: `http://127.0.0.1:8000`
+
+### Client SPA Fallback (`vercel.json`)
+Client-side routes such as `/dashboard`, `/runs`, `/reports`, `/settings` are redirected cleanly to `/index.html` using the root `vercel.json`:
+```json
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "outputDirectory": "dist",
+  "buildCommand": "vite build",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
+
+---
+
+## 7. Windows Local Startup Script (`start-local.ps1`)
+
+For Windows users, `start-local.ps1` in the repository root automates directory creation, database migrations, and simultaneous dual-process startup:
+```powershell
+.\start-local.ps1
+```
+
+---
+
+## 8. Docker Deployment (Optional Alternative)
 
 For multi-container or production-like environments:
 
