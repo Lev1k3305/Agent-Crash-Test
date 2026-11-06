@@ -1,0 +1,10 @@
+# Vercel Deployment Ignore Rules
+# Agent Crash Test — Pure Static Vite Deployment
+# Exclude backend and local dev orchestrator from Vercel build/serverless detection
+
+server.ts
+backend/
+data/
+start-local.ps1
+docker-compose.yml
+alembic.ini
